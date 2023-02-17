@@ -9,6 +9,8 @@
   "author": "LJ",
   "license": "ISC",
   "dependencies": {
-    "@angular-devkit/build-angular": "^15.1.5"
+    "@angular-devkit/build-angular": "^15.1.5",
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
   }
 }
