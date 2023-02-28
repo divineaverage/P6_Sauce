@@ -19,38 +19,25 @@ mongoose.connect(MONGODBURL)
     console.error(error);
   });
 
+//Sign up
 app.use("/api/auth/signup",(req, res) => {
     res.status(201).json({ message: 'Your request was successful!' });
 });
 
+//Login
 app.use("/api/auth/login",(req, res) => {
     res.status(201).json({ message: 'Your request was successful!' });
 });
 
-app.use("/api/auth/deleteuser",(req, res) => {
-    res.status(201).json({ message: 'Your request was successful!' });
-});
-
 app.post('/api/posts', function (req, res, next) {
-    var post = new user({
-      email: req.body.username,
-      password: req.body.body
-    })
-    post.save(function (err, post) {
-      if (err) { return next(err) }
-      res.json(201, post)
-    })
+  var post = new user({
+    email: req.body.username,
+    password: req.body.body
   })
-
-import express from "express";
-import UsersController from "../controllers/UsersController.js";
-const usersRouter = express.Router();
-
-const users = new UsersController();
-
-usersRouter.post("/signup", users.signup);
-
-export default usersRouter;
-
+  post.save(function (err, post) {
+    if (err) { return next(err) }
+    res.json(201, post)
+  })
+})
 
 module.exports = app;
