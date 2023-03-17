@@ -1,4 +1,5 @@
-import User from "../models/user.model.js";
+import User from "../models/users";
+import {comparePasswords} from "../helpers/users";
 
 class UsersController {
 //Signup
@@ -19,7 +20,7 @@ class UsersController {
 
       await user.save();
 
-      return res.status(201).send(user);
+      return res.status(201).json(user);
     } catch (error) {
       console.error(error);
       return res.status(500).json({
@@ -49,7 +50,7 @@ class UsersController {
         });
       }
 
-      return res.status(200).send({
+      return res.status(200).json({
         success: true,
         message: "User logged in successfully",
       });

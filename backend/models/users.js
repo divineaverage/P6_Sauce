@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
-    Schema = mongoose.Schema;
-    uniqueValidator = require('mongoose-unique-validator');
-    bcrypt = require('bcrypt');
-    SALT_WORK_FACTOR = 10;
+const Schema = mongoose.Schema;
+const uniqueValidator = require('mongoose-unique-validator');
+const bcrypt = require('bcrypt');
     
 const Email = new Schema({
 	
@@ -11,19 +10,6 @@ const Email = new Schema({
 		validated: {type: Boolean, default: false}
 	
 	});
-
-	
-const Point = new mongoose.Schema({
-  type: {
-    type: String,
-    enum: ['Point'],
-    required: true
-  },
-  coordinates: {
-    type: [Number],
-    required: true
-  }
-});
 
 const UserSchema = new Schema({
         email: {type: Email, required: true},
@@ -40,8 +26,8 @@ UserSchema.pre("save", function(next) {
     next();
 });
 
-UserSchema.methods.comparePassword = function(plaintext, callback) {
-    return callback(null, bcrypt.compareSync(plaintext, this.password));
+UserSchema.methods.comparePassword = function(plaintext) {
+    return (bcrypt.compareSync(plaintext, this.password));
 };
 
 module.exports = mongoose.model("User", UserSchema);

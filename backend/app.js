@@ -3,7 +3,11 @@ const cors = require("cors");
 const app = express();
 const {MONGODBURL} = require("dotenv").config().parsed;
 const mongoose = require('mongoose');
-const user = require("./models/users")
+const user = require("./models/users");
+import UsersController from "./controllers/users";
+const sauceCtrl = require('../controllers/sauce-ctrl');
+const auth = require('../middleware/auth');
+const multer = require('../middleware/multer-config');
 
 console.log(MONGODBURL);
 
@@ -20,14 +24,10 @@ mongoose.connect(MONGODBURL)
   });
 
 //Sign up
-app.use("/api/auth/signup",(req, res) => {
-    res.status(201).json({ message: 'Your request was successful!' });
-});
+app.use("/api/auth/signup", UsersController.signup)
 
 //Login
-app.use("/api/auth/login",(req, res) => {
-    res.status(201).json({ message: 'Your request was successful!' });
-});
+app.use("/api/auth/login", UsersController.login)
 
 app.post('/api/posts', function (req, res, next) {
   var post = new user({
@@ -39,5 +39,13 @@ app.post('/api/posts', function (req, res, next) {
     res.json(201, post)
   })
 })
+
+//Sauce functions
+router.post('/', auth, multer, sauceCtrl.createSauce);
+router.put('/:id', auth, multer, sauceCtrl.modifySauce);
+router.delete('/:id', auth, sauceCtrl.deleteSauce);
+router.get('/:id', auth, sauceCtrl.getOneSauce);
+router.get('/', auth, sauceCtrl.getAllSauce);
+router.post('/:id/like', auth, sauceCtrl.likeOrDislike);
 
 module.exports = app;
