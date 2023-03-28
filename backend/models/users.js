@@ -1,9 +1,10 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
+import bcrypt from 'bcrypt';
+
 const Schema = mongoose.Schema;
-const uniqueValidator = require('mongoose-unique-validator');
-const bcrypt = require('bcrypt');
     
-const Email = new Schema({
+export const Email = new Schema({
 	
 		address: {type: String, lowercase: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
 		// Change the default to true if you don't need to validate a new user's email address
@@ -11,7 +12,7 @@ const Email = new Schema({
 	
 	});
 
-const UserSchema = new Schema({
+export const UserSchema = new Schema({
         email: {type: Email, required: true},
 		password: { type: String, required: true },	
 	},);
@@ -30,4 +31,5 @@ UserSchema.methods.comparePassword = function(plaintext) {
     return (bcrypt.compareSync(plaintext, this.password));
 };
 
-module.exports = mongoose.model("User", UserSchema);
+export const User = mongoose.model('User', UserSchema);
+export default User
