@@ -1,12 +1,12 @@
 import express from 'express';
 import cors from "cors";
 import mongoose from 'mongoose';
-import user from "./models/users";
-import UsersController from "./controllers/users";
-import auth from '../middleware/auth';
-import multer from '../middleware/multer-config';
+import user from "./models/users.js";
+import UsersController from "./controllers/users.js";
+import auth from './middleware/auth.js';
+import multer from './middleware/multer-config.js';
 import {config} from "dotenv";
-import { createSauce, deleteSauce, getAllSauce, getOneSauce, likeSauce, modifySauce } from './controllers/sauces';
+import { createSauce, deleteSauce, getAllSauce, getOneSauce, likeSauce, modifySauce } from './controllers/sauces.js';
 const {MONGODBURL} = config().parsed;
 export const app = express();
 

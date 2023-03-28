@@ -1,4 +1,4 @@
-require mongoose = 'mongoose';
+import mongoose from 'mongoose';
 
 const sauceSchema = mongoose.Schema({
   userId: { type: String },

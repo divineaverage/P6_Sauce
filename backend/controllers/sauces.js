@@ -1,6 +1,6 @@
-const Sauce = require("../models/sauces");
-const fs = require("fs");
-const jwt = require("jsonwebtoken");
+import Sauce from "../models/sauces.js";
+import fs from "fs";
+import jwt from "jsonwebtoken";
 
 // Create a sauce
 export const createSauce = (req, res) => {
@@ -40,53 +40,54 @@ export const getOneSauce = (req, res) => {
 
 // Edit a sauce
 export const modifySauce = (req, res) => {
-   const sauceObject = req.file? {
-     ...JSON.parse(req.body.sauce),
-     imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-   } : { ...req. body };
+  const sauceObject = req.file? {
+    ...JSON.parse(req.body.sauce),
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+  } : { ...req. body };
 
-   delete sauceObject._userId;
-   Sauce.findOne({ _id: req.params.id })
-     .then((sauce) => {
-        if (!sauce) {
-            res.status(404).json({message: "Sauce not found."});
-        }
-       else {
-        const token = req.headers.authorization.split(" ")[1];
-        const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
-        const userId = decodedToken.userId;
-
-        if (sauce.userId !== userId) {
-            res.status(401).json({message: "You are not authorized to edit this sauce."});
-        }} else {
-         Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-           .then(() => res.status(200).json({message: "Sauce changed!" }))
-           .catch(error => res.status(500).json({ error }));
-       }
-     })
-     .catch((error) => {
-       res.status(404).json({ error });
-     });
+  delete sauceObject._userId;
+  Sauce.findOne({ _id: req.params.id })
+    .then((sauce) => {
+      if (sauce.userId != req.auth.userId) {
+        res.status(401).json({ message: "You are not authorized to edit this sauce." });
+      } else {
+        Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+          .then(() => res.status(200).json({ message: "Sauce changed!" }))
+          .catch(error => res.status(401).json({ error }));
+      }
+    })
+    .catch((error) => {
+      res.status(400).json({ error });
+    });
 };
 
 // Delete a sauce
 export const deleteSauce = (req, res) => {
-   Sauce.findOne({ _id: req.params.id })
-     .then(sauce => {
-       if (sauce.userId != req.auth.userId) {
-         res.status(401).json({message: "You are not authorized to delete this sauce." });
-       } else {
-         const filename = sauce.imageUrl.split("/images/")[1];
-         fs.unlink(`images/${filename}`, () => {
-           Sauce.deleteOne({ _id: req.params.id })
-             .then(() => { res.status(200).json({message: "Sauce removed!" }) })
-             .catch(error => res.status(500).json({ error }));
-         });
-       }
-     })
-     .catch(error => {
-       res.status(404).json({ error });
-     });
+  Sauce.findOne({ _id: req.params.id })
+  .then((sauce) => {
+      if (!sauce) {
+          res.status(404).json({message: "Sauce not found."});
+      }
+      else {
+          const token = req.headers.authorization.split(' ')[1];
+          const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
+          const userId = decodedToken.userId;
+
+          if (sauce.userId !== userId) {
+              res.status(401).json({message: "You're not authorized to delete this sauce."});
+          }
+          else {
+              const filename = sauce.imageUrl.split('/images/')[1];
+              fs.unlink(`images/${filename}`, () => {
+                  Sauce.deleteOne({ _id: req.params.id })
+                      .then(() => res.status(200).json({ message: "Sauce deleted." }))
+                      .catch(error => res.status(400).json({ message: error.message }));
+              });
+          }
+      }
+
+  })
+  .catch(error => res.status(500).json({ message: error.message }));
 };
 
 // Retrieve all sauces
@@ -135,3 +136,4 @@ export const likeSauce = (req, res) => {
        .catch( error => res.status(404).json({ error}))
    }
 };
+

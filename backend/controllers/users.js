@@ -1,5 +1,4 @@
-import User from "../models/users";
-import {comparePasswords} from"../helpers/users";
+import User from "../models/users.js";
 import bcrypt from'bcrypt';
 import jwt from'jsonwebtoken';
 
@@ -29,10 +28,10 @@ class UsersController {
                 .catch(error => res.status(400).json({ message: error.message }));
         })
         .catch(error => res.status(500).json({ message: error.message }));
-};
+}
 
-      return res.status(201).json(user);
-    } catch (error) {
+      catch { res.status(201).json(user);
+    } finally {
       console.error(error);
       return res.status(500).json({
         error: true,
@@ -93,5 +92,6 @@ class UsersController {
       });
     }
   }
+}
 
 export default UsersController;
