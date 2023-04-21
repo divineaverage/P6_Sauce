@@ -99,7 +99,9 @@ export const getAllSauce = (res) => {
    ).catch(
      (error) => {
        res.status(404).json({
-         error: error
+        error: {
+          message: "Sauces not found."
+        }
        });
      }
    );

@@ -4,10 +4,9 @@ import jwt from'jsonwebtoken';
 
 class UsersController {
 //Signup
-  async signup(req, res) {
-    try {
+  static async signup(req, res) {
       let user = await User.findOne({
-        username: req.body.username,
+        email: req.body.email,
       });
 
       if (user) {
@@ -28,20 +27,11 @@ class UsersController {
                 .catch(error => res.status(400).json({ message: error.message }));
         })
         .catch(error => res.status(500).json({ message: error.message }));
-}
-
-      catch { res.status(201).json(user);
-    } finally {
-      console.error(error);
-      return res.status(500).json({
-        error: true,
-        message: "Cannot Sign up",
-      });
     }
-  }
+
 //Login
-  async login(req, res) {
-    if (!req.body.username) {
+  static async login(req, res) {
+    if (!req.body.email) {
       return res.status(400).json({
         message: "Username is required.",
       })
@@ -52,7 +42,7 @@ class UsersController {
       })
     }
     try {
-      let user = await User.findOne({ username: req.body.username });
+      let user = await User.findOne({ username: req.body.email });
 
       if (!user) {
         return res.status(404).json({
@@ -61,14 +51,16 @@ class UsersController {
         });
       }
 
-      const isValid = await bcrypt.compare(req.body.password, user.password)
+      bcrypt.hash(req.body.password, 10)
+      .then(async (hash) => {
+        const isValid = await bcrypt.compare(hash, user.password)
       
 
       if (!isValid) {
         return res.status(401).json({
           error: true,
           message: "Invalid password.",
-});
+        });
       } else {
         let token = jwt.sign(
             { userId: user._id },
@@ -79,12 +71,17 @@ class UsersController {
             userId: user._id,
             token: token
         });
+      }})
+
+      .catch(error => res.status(500).json({ message: error.message }));
+
 
       return res.status(200).json({
         success: true,
         message: "Successful login.",
       });
-  }} catch (error) {
+      
+  } catch (error) {
       console.error(error);
       return res.status(500).json({
         error: true,

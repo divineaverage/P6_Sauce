@@ -13,7 +13,7 @@ export const Email = new Schema({
 	});
 
 export const UserSchema = new Schema({
-        email: {type: Email, required: true},
+        email: {type: String, required: true},
 		password: { type: String, required: true },	
 	},);
 

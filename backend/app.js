@@ -33,7 +33,7 @@ app.use("/api/auth/login", UsersController.login)
 
 app.post('/api/posts', function (req, res, next) {
   var post = new user({
-    email: req.body.username,
+    email: req.body.email,
     password: req.body.body
   })
   post.save(function (err, post) {
@@ -43,11 +43,11 @@ app.post('/api/posts', function (req, res, next) {
 })
 
 //Sauce functions
-router.post('/', auth, multer, createSauce);
-router.put('/:id', auth, multer, modifySauce);
-router.delete('/:id', auth, deleteSauce);
-router.get('/:id', auth, getOneSauce);
-router.get('/', auth, getAllSauce);
-router.post('/:id/like', auth, likeSauce);
+app.post('/', auth, multer, createSauce);
+app.put('/:id', auth, multer, modifySauce);
+app.delete('/:id', auth, deleteSauce);
+app.get('/:id', auth, getOneSauce);
+app.get('/api/sauces', auth, getAllSauce);
+app.post('/:id/like', auth, likeSauce);
 
 export default app;
