@@ -1,6 +1,6 @@
 import User from "../models/users.js";
-import bcrypt from'bcrypt';
-import jwt from'jsonwebtoken';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 class UsersController {
 //Signup
@@ -17,7 +17,7 @@ class UsersController {
       }
 
       bcrypt.hash(req.body.password, 10)
-        .then(hash => {
+        .then((hash) => {
             const user = new User({
                 email: req.body.email,
                 password: hash
@@ -27,7 +27,7 @@ class UsersController {
                 .catch(error => res.status(400).json({ message: error.message }));
         })
         .catch(error => res.status(500).json({ message: error.message }));
-    }
+      };
 
 //Login
   static async login(req, res) {
@@ -80,12 +80,12 @@ class UsersController {
         success: true,
         message: "Successful login.",
       });
-      
+
   } catch (error) {
       console.error(error);
       return res.status(500).json({
         error: true,
-        message: "Couldn't login. Please try again.",
+        message: "Couldn't log in. Please try again.",
       });
     }
   }
