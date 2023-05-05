@@ -1,12 +1,9 @@
 import Sauce from "../models/sauces.js";
 import fs from "fs";
-import jwt from "jsonwebtoken";
 
 // Create a sauce
 export const createSauce = (req, res) => {
      const sauceObject = JSON.parse(req.body.sauce);
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
-    const userId = decodedToken.userId;
 
     delete sauceObject._id;
     delete sauceObject._userId;
@@ -14,7 +11,7 @@ export const createSauce = (req, res) => {
     const sauce = new Sauce({
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
-        userId: userId
+        userId: sauceObject.userId
     });
     sauce.save()
         .then(() => res.status(201).json({message: "Sauce added." }))
@@ -91,7 +88,7 @@ export const deleteSauce = (req, res) => {
 };
 
 // Retrieve all sauces
-export const getAllSauce = (res) => {
+export const getAllSauce = (req, res) => {
    Sauce.find().then(
      (sauces) => {
        res.status(200).json(sauces);
@@ -100,7 +97,8 @@ export const getAllSauce = (res) => {
      (error) => {
        res.status(404).json({
         error: {
-          message: "Sauces not found."
+          message: "Sauces not found.",
+          ...error
         }
        });
      }

@@ -41,7 +41,6 @@ class UsersController {
         message: "Password is required."
       })
     }
-    try {
       let user = await User.findOne({ username: req.body.email });
 
       if (!user) {
@@ -51,10 +50,8 @@ class UsersController {
         });
       }
 
-      bcrypt.hash(req.body.password, 10)
-      .then(async (hash) => {
-        const isValid = await bcrypt.compare(hash, user.password)
-      
+      bcrypt.compare(req.body.password, user.password)
+      .then(async (isValid) => {
 
       if (!isValid) {
         return res.status(401).json({
@@ -75,20 +72,7 @@ class UsersController {
 
       .catch(error => res.status(500).json({ message: error.message }));
 
-
-      return res.status(200).json({
-        success: true,
-        message: "Successful login.",
-      });
-
-  } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        error: true,
-        message: "Couldn't log in. Please try again.",
-      });
     }
   }
-}
 
 export default UsersController;
