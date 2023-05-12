@@ -7,7 +7,7 @@ class UsersController {
   static async signup(req, res) {
       let user = await User.findOne({
         email: req.body.email,
-      });
+      }).exec();
 
       if (user) {
         return res.status(401).json({
@@ -17,17 +17,14 @@ class UsersController {
       }
 
       bcrypt.hash(req.body.password, 10)
-        .then((hash) => {
-            const user = new User({
-                email: req.body.email,
-                password: hash
-            });
-            user.save()
-                .then(() => res.status(201).json({message: "User created." }))
-                .catch(error => res.status(400).json({ message: error.message }));
-        })
-        .catch(error => res.status(500).json({ message: error.message }));
-      };
+        if ((hash) => {
+          const user = new User({ email: req.body.email, password: hash });
+          user.save((err) => {
+            if (err) return res.status(400).json({ message: err.message || err });
+            return res.status(201).json({ message: "User created." });
+          });
+        });
+      }
 
 //Login
   static async login(req, res) {
@@ -41,7 +38,7 @@ class UsersController {
         message: "Password is required."
       })
     }
-      let user = await User.findOne({ username: req.body.email });
+      let user = await User.findOne({ username: req.body.email }).exec();
 
       if (!user) {
         return res.status(404).json({
