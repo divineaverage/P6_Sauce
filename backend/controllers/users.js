@@ -16,17 +16,15 @@ class UsersController {
         });
       }
 
-      bcrypt.hash(req.body.password, 10)
-      .then((hash) => {
-        const user = new user({
+      bcrypt.hash(req.body.password, 10).then((hash) => {
+        const user = new User({
             email: req.body.email,
             password: hash
         });
-        user.save((err) => {
-          if (err) return res.status(400).json({ message: err.message || err })
+        user.save().then(() => {
+          res.status(201).json({ message: 'User added successfully!' });
         });
-    return (error => res.status(500).json({ message: error.message }));
-  });
+      }).catch(error => res.status(500).json({ message: error.message }));
   };
 
 //Login
