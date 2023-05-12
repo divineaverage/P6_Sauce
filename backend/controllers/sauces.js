@@ -22,7 +22,7 @@ export const createSauce = (req, res) => {
 export const getOneSauce = (req, res) => {
    Sauce.findOne({
      _id: req.params.id
-   }).exec()
+   })
    .then(
      (sauce) => {
        res.status(200).json(sauce);
@@ -44,7 +44,7 @@ export const modifySauce = (req, res) => {
   } : { ...req. body };
 
   delete sauceObject._userId;
-  Sauce.findOne({ _id: req.params.id }).exec()
+  Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       if (sauce.userId != req.auth.userId) {
         res.status(401).json({ message: "You are not authorized to edit this sauce." });
@@ -61,7 +61,7 @@ export const modifySauce = (req, res) => {
 
 // Delete a sauce
 export const deleteSauce = (req, res) => {
-  Sauce.findOne({ _id: req.params.id }).exec()
+  Sauce.findOne({ _id: req.params.id })
   .then((sauce) => {
       if (!sauce) {
           res.status(404).json({message: "Sauce not found."});
@@ -120,7 +120,7 @@ export const likeSauce = (req, res) => {
        .catch( error => res.status(500).json({ error}))
 
    } else { // cancel the like or dislike button
-       Sauce.findOne( {_id: req.params.id}).exec()
+       Sauce.findOne( {_id: req.params.id})
        .then( sauce => {
            if( sauce.usersLiked.indexOf(req.body.userId)!== -1){
                 Sauce.updateOne({_id: req.params.id}, { $inc: { likes: -1},$pull: { usersLiked: req.body.userId}, _id: req.params.id })
